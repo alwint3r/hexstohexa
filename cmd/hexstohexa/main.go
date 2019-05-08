@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -10,20 +11,25 @@ import (
 func main() {
 	args := os.Args[1:]
 
-	for _, arg := range args {
-		bytes, err := hex.DecodeString(arg)
-		if err != nil {
-			log.Fatalln(err)
-		}
+	var stringbuffer bytes.Buffer
 
-		length := len(bytes)
-		fmt.Print("{ ")
-		for idx, bytedata := range bytes {
-			fmt.Printf("0x%02X", bytedata)
-			if length-idx > 1 {
-				fmt.Print(", ")
-			}
-		}
-		fmt.Println(" }")
+	for _, arg := range args {
+		stringbuffer.WriteString(arg)
 	}
+
+	bytesData, err := hex.DecodeString(stringbuffer.String())
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	length := len(bytesData)
+	fmt.Print("{ ")
+	for idx, bytedata := range bytesData {
+		fmt.Printf("0x%02X", bytedata)
+		if length-idx > 1 {
+			fmt.Print(", ")
+		}
+	}
+	fmt.Println(" }")
 }
